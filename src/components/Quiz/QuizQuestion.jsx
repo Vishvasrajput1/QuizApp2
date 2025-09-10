@@ -1,6 +1,9 @@
-import React from 'react'
+import React,{useEffect,useState} from 'react'
 import { FaReact, FaNode, FaJs, FaPython, FaJava, FaAngular } from "react-icons/fa";
 import 'animate.css';
+import {X} from 'lucide-react'
+import { pre } from 'framer-motion/client';
+import { motion } from "framer-motion";
 
 export const QuizQuestion = ({
   isDark,
@@ -13,6 +16,8 @@ export const QuizQuestion = ({
   handleNextQuestion,
   selectedOptions,
   answerResults,
+  previousClicked,
+
 }) => {
   const techIcons = {
     reactjs: <FaReact color="#007bff" size={20} />,
@@ -23,27 +28,78 @@ export const QuizQuestion = ({
     angular: <FaAngular color="#007bff" size={20} />
   };
   const normalizeTech = (tech) => tech.toLowerCase().replace('.', '').replace(' ', '').trim();
-  return (
+  const [animate, setAnimate] = useState(true);
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05, // Stagger animation for children
+      },
+    },
+  };
+  const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0 },
+  };
+  // If user goes back without submitting (clicking Next/Submit), uncheck the option
+  useEffect(() => {
+    // If there's no answer result for this question and no selectedOptions, clear selectedOption
+    if (
+      answerResults[currentQuestionIndex] === undefined &&
+      selectedOptions[currentQuestionIndex] === undefined &&
+      selectedOption !== null
+    ) {
+      handleOptionSelect(null);
+    }
+    setAnimate(false);
+    const timeout = setTimeout(() => setAnimate(true), 200); // next tick
+    return () => clearTimeout(timeout);
+    // eslint-disable-next-line
+  }, [currentQuestionIndex,previousClicked]);
 
-    <div className={` rounded-lg  p-5 ${isDark ? 'bg-gray-800 text-white' : 'bg-white text-gray-900'}`}>
+  return (
+    <div className="w-full mt-10">
       <div className="mb-5 question-header">
-        <h2
-          className="
-    text-lg
-    md:text-xl
-    font-bold
-    leading-snug
-    mb-2
-    min-h-[3.5rem]   
-    flex
-    items-center
-    transition-all
-    duration-300
-    break-words
-  "
+        <h1
+          key={currentQuestionIndex}
+          className={`
+            ${animate ? '' : ''} 
+           
+            text-3xl
+            
+            font-bold
+            leading-snug
+            mb-2
+            min-h-[3.5rem]
+            flex
+            items-center
+            transition-all
+            duration-300
+            break-words
+          `}
+          
         >
-          {currentQuestion.text}
-        </h2>
+          {/* {currentQuestion.text.split('').map((char, index) => (
+            <span
+              key={index}
+              className="inline-block animate-text-reveal"
+              style={{ animationDelay: `${index * 0.02}s` }}
+            >
+              {char === ' ' ? '\u00A0' : char} 
+            </span>
+          ))} */}
+          {currentQuestion.text.split('').map((char, index) => (
+            <span
+              key={index}
+              className="inline-block animate-text-reveal"
+              style={{ animationDelay: `${index * 0.03}s` }}
+            >
+              {/* Replace spaces with a non-breaking space to preserve word spacing */}
+              {char === ' ' ? '\u00A0' : char}
+            </span>
+          ))}
+        </h1>
         <div className="flex flex-row items-center gap-2 mt-2 mb-2 cursor-pointer flex-wrap">
           {currentQuestion.technologies?.map((tech, index) => {
             const normalizedTech = normalizeTech(tech);
@@ -57,16 +113,31 @@ export const QuizQuestion = ({
         </div>
       </div>
 
-      <div className="flex flex-col gap-5 pt-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-[3rem] gap-y-[3rem]  pt-2">
         {currentQuestion.options.map((option, index) => (
           <label
             key={index}
             className={`
-                                flex items-center gap-5 px-4 py-3 rounded-md ${isDark ? 'border-2 border-gray-900' : 'border-2 border-gray-300'} cursor-pointer 
-                                ${(selectedOption === option || selectedOptions[currentQuestionIndex] === option) ? isDark ? 'bg-blue-500 bordr-blue-800 shadow' : 'bg-blue-200 border-blue-400 shadow' : ''}
-                                hover:border-blue-500 hover:shadow
-                                option-button
-                            `}
+              flex md:flex-row flex-col items-start md:items-center gap-3 px-4 py-4 whitespace-pre-wrap rounded-xl border-2 cursor-pointer w-full min-w-0
+              ${isDark ? 'border-gray-800' : 'border-gray-300'}
+              ${(selectedOption === option || selectedOptions[currentQuestionIndex] === option)
+                ? isDark
+                  ? 'bg-blue-500 border-blue-800 shadow'
+                  : 'bg-blue-200 border-blue-400 shadow'
+                : ''
+              }
+              hover:border-blue-500 hover:shadow
+              transition
+              option-button
+              ${answerResults[currentQuestionIndex] !== undefined
+                ? (option === currentQuestion.correctAnswer
+                  ? (isDark ? 'bg-green-500 border-green-800 text-white' : 'bg-green-200 border-green-400 text-black')
+                  : (selectedOptions[currentQuestionIndex] === option
+                    ? (isDark ? 'bg-red-400 border-red-800 text-white' : 'bg-red-200 border-red-400 text-black')
+                    : ''))
+                : ''
+              }
+            `}
           >
             <input
               type="radio"
@@ -78,18 +149,19 @@ export const QuizQuestion = ({
               className="hidden"
             />
             <span className={`
-                                w-4 h-4 min-w-[1rem] min-h-[1rem] max-w-[1rem] max-h-[1rem] rounded-full border-2 border-blue-500  flex-shrink-0 relative
-                                
-                                ${selectedOption === option || selectedOptions[currentQuestionIndex] === option ? 'bg-blue-500 shadow-inner' : ''}
-                                ${selectedOption === option || selectedOptions[currentQuestionIndex] === option ? 'after:content-[""] after:block after:w-2 after:h-2 after:rounded-full after:bg-white after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2' : ''}
-                                custom-radio
-                            `}></span>
-            <span className="text-base pl-2 option-text">{option}</span>
+              w-4 h-4 min-w-[1rem] min-h-[1rem] max-w-[1rem] max-h-[1rem] rounded-full border-2 border-blue-500 flex-shrink-0 relative mt-1 md:mt-0
+              ${selectedOption === option || selectedOptions[currentQuestionIndex] === option ? 'bg-blue-500 shadow-inner' : ''}
+              ${selectedOption === option || selectedOptions[currentQuestionIndex] === option ? 'after:content-[""] after:block after:w-2 after:h-2 after:rounded-full after:bg-white after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2' : ''}
+              custom-radio
+              ${answerResults[currentQuestionIndex] !== undefined && option === currentQuestion.correctAnswer ? (isDark ? 'bg-green-500 border-green-800 ' : 'bg-green-200 border-green-400 shadow-inner') : ''}
+              ${answerResults[currentQuestionIndex] !== undefined && selectedOptions[currentQuestionIndex] === option && option !== currentQuestion.correctAnswer ? (isDark ? 'bg-red-400 border-red-800 shadow-inner after:bg-red-400' : 'bg-red-200 border-red-400 shadow-inner after:bg-rd-200') : ''}
+            `}> </span>
+            <span className="text-base pl-2 pr-3 break-words whitespace-normal w-full block option-text">{option}</span>
           </label>
         ))}
       </div>
 
-      <div className="flex justify-between mt-6">
+      <div className="flex justify-between align-end  mt-16">
         <button
           className="bg-gradient-to-br from-blue-500 to-blue-800 text-white px-4 py-2 rounded-md shadow cursor-pointer transition hover:to-blue-500 hover:-translate-y-0.1 hover:scale-101 disabled:to-blue-400 disabled:text-white disabled:cursor-not-allowed"
           onClick={handlePreviousQuestion}
@@ -98,8 +170,9 @@ export const QuizQuestion = ({
           Previous
         </button>
         <button
-          className="bg-gradient-to-br from-blue-500 to-blue-800 text-white px-4 py-2 rounded-md shadow transition cursor-pointer hover:to-blue-500 hover:-translate-y-0.1 hover:scale-101"
+          className="bg-gradient-to-br from-blue-500 to-blue-800 text-white px-4 py-2 rounded-md shadow transition cursor-pointer hover:to-blue-500 hover:-translate-y-0.1 hover:scale-101 disabled:to-blue-400 disabled:text-white disabled:cursor-not-allowed"
           onClick={handleNextQuestion}
+          disabled={selectedOption === null && selectedOptions[currentQuestionIndex] === undefined}
         >
           {currentQuestionIndex === questions.length - 1 ? 'Submit' : 'Next'}
         </button>
