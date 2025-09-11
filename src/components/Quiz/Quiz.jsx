@@ -42,24 +42,37 @@ const Quiz = () => {
 
   const PASS_PERCENT = 0.6;
   const questions = [
+    // {
+    //   id: 1,
+    //   text: 'What is the correct way to create a functional component in React?',
+    //   options: [
+    //     'function MyComponent() { return Hello; }',
+    //     'const MyComponent = () => { return Hello; }',
+    //     'class MyComponent extends React.Component { render() { return Hello; }}',
+    //     'Both A and B are correct',
+    //   ],
+    //   correctAnswer: 'Both A and B are correct',
+    //   technologies: ['React.js', 'Node.js'],
+    // },
     {
       id: 1,
       text: 'What is the correct way to create a functional component in React?',
       options: [
-        'function MyComponent() { return Hello; }',
-        'const MyComponent = () => { return Hello; }',
-        'class MyComponent extends React.Component { render() { return Hello; }}',
-        'Both A and B are correct',
+        'function MyComponent() { return Hello; } lorem ipsum random text to overflow the option button   mkmfv',
+        'const MyComponent = () => { return Hello; } random text to overflow the option button  mkmfv lorem ipsum random text to overflow the option button',
+        'class MyComponent extends React.Component { render() { return Hello; }} random text to overflow the option button  mkmfv lorem ipsum random text to overflow the option button',
+        'Both A and B are correct random text to overflow the option button  mkmfv lorem ipsum random text to overflow the option button',
       ],
-      correctAnswer: 'Both A and B are correct',
+      correctAnswer: 'Both A and B are correct random text to overflow the option button  mkmfv lorem ipsum random text to overflow the option button',
       technologies: ['React.js', 'Node.js'],
     },
     {
       id: 2,
       text: 'What is JSX in React?',
       options: [
+
         'A syntax extension for JavaScript',
-        'A templating engine nkwshhhhhhhhhhhhuuuuuuuuuu8u889u92-7ty7tggqwguygudvwuvvfuwv784kkkkkfkkkkkllalllalalal',
+        'A templating engine',
         'A library for managing state',
         'A CSS framework',
       ],
@@ -193,9 +206,9 @@ const Quiz = () => {
 
   const inAnimation = (nextIndex) => {
 
-    
+
     gsap.from('.question-header', {
-      y:  100,
+      y: 100,
       opacity: 0,
       duration: 0.6,
       ease: "power2.out",
@@ -258,7 +271,6 @@ const Quiz = () => {
       }, "-=0.2" + index * 0.2); // overlap timing a bit
     });
   };
-
 
   useGSAP(
     () => {
@@ -396,14 +408,13 @@ const Quiz = () => {
       // setCurrentQuestionIndex((prev) => prev - 1);
       setSelectedOptions((prev) => {
         const updated = [...prev];
-        if (answerResults[currentQuestionIndex] === undefined)
-          {
-            
-            updated[currentQuestionIndex] = undefined;
-          }
-          return updated;
-        });
-        setSelectedOption(null);
+        if (answerResults[currentQuestionIndex] === undefined) {
+
+          updated[currentQuestionIndex] = undefined;
+        }
+        return updated;
+      });
+      setSelectedOption(null);
       goToQuestion(-1);
       setPreviousClicked(true);
       setTimeout(() => setPreviousClicked(false), 500);
@@ -436,11 +447,10 @@ const Quiz = () => {
               questions={questions}
               progressRefs={progressRefs}
               answerResults={answerResults}
-              setAnswerResults={setAnswerResults}
               setNextClicked={setNextClicked}
               selectedOption={selectedOption}
               goToQuestion={goToQuestion}
-              nextClicked={nextClicked}
+              selectedOptions={selectedOptions}
               setPreviousClicked={setPreviousClicked}
             />
             <QuizQuestion

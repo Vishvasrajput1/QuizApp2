@@ -1,9 +1,11 @@
-import React,{useEffect,useState} from 'react'
+import React, { useEffect, useState } from 'react'
 import { FaReact, FaNode, FaJs, FaPython, FaJava, FaAngular } from "react-icons/fa";
 import 'animate.css';
-import {X} from 'lucide-react'
+import { X } from 'lucide-react'
 import { pre } from 'framer-motion/client';
 import { motion } from "framer-motion";
+import { Controls } from './Controls';
+
 
 export const QuizQuestion = ({
   isDark,
@@ -56,7 +58,7 @@ export const QuizQuestion = ({
     const timeout = setTimeout(() => setAnimate(true), 200); // next tick
     return () => clearTimeout(timeout);
     // eslint-disable-next-line
-  }, [currentQuestionIndex,previousClicked]);
+  }, [currentQuestionIndex, previousClicked]);
 
   return (
     <div className="w-full mt-10">
@@ -64,31 +66,10 @@ export const QuizQuestion = ({
         <h1
           key={currentQuestionIndex}
           className={`
-            ${animate ? '' : ''} 
-           
-            text-3xl
-            
-            font-bold
-            leading-snug
-            mb-2
-            min-h-[3.5rem]
-            flex
-            items-center
-            transition-all
-            duration-300
-            break-words
-          `}
-          
+            ${animate ? '' : ''}  lg:text-3xl md:text-2xl text-lg flex-wrap font-bold leading-snug mb-2 min-h-[3.5rem] flex items-center transition-all duration-300 break-words
+          `}              
         >
-          {/* {currentQuestion.text.split('').map((char, index) => (
-            <span
-              key={index}
-              className="inline-block animate-text-reveal"
-              style={{ animationDelay: `${index * 0.02}s` }}
-            >
-              {char === ' ' ? '\u00A0' : char} 
-            </span>
-          ))} */}
+
           {currentQuestion.text.split('').map((char, index) => (
             <span
               key={index}
@@ -161,22 +142,15 @@ export const QuizQuestion = ({
         ))}
       </div>
 
-      <div className="flex justify-between align-end  mt-16">
-        <button
-          className="bg-gradient-to-br from-blue-500 to-blue-800 text-white px-4 py-2 rounded-md shadow cursor-pointer transition hover:to-blue-500 hover:-translate-y-0.1 hover:scale-101 disabled:to-blue-400 disabled:text-white disabled:cursor-not-allowed"
-          onClick={handlePreviousQuestion}
-          disabled={currentQuestionIndex === 0}
-        >
-          Previous
-        </button>
-        <button
-          className="bg-gradient-to-br from-blue-500 to-blue-800 text-white px-4 py-2 rounded-md shadow transition cursor-pointer hover:to-blue-500 hover:-translate-y-0.1 hover:scale-101 disabled:to-blue-400 disabled:text-white disabled:cursor-not-allowed"
-          onClick={handleNextQuestion}
-          disabled={selectedOption === null && selectedOptions[currentQuestionIndex] === undefined}
-        >
-          {currentQuestionIndex === questions.length - 1 ? 'Submit' : 'Next'}
-        </button>
-      </div>
+      <Controls
+        isDark={isDark}
+        currentQuestionIndex={currentQuestionIndex}
+        questions={questions}
+        selectedOption={selectedOption}
+        handlePreviousQuestion={handlePreviousQuestion}
+        handleNextQuestion={handleNextQuestion}
+        selectedOptions={selectedOptions}
+      />
     </div>
   )
 }
