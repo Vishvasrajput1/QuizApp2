@@ -66,22 +66,13 @@ export const QuizQuestion = ({
         <h1
           key={currentQuestionIndex}
           className={`
-            ${animate ? '' : ''}  lg:text-3xl md:text-2xl text-lg flex-wrap font-bold leading-snug mb-2 min-h-[3.5rem] flex items-center transition-all duration-300 break-words
+            ${animate ? 'slit-in-horizontal' : ''}  lg:text-3xl md:text-2xl text-lg flex-wrap font-bold leading-snug mb-2 min-h-[3.5rem] flex items-center transition-all duration-300 break-words 
           `}              
         >
 
-          {currentQuestion.text.split('').map((char, index) => (
-            <span
-              key={index}
-              className="inline-block animate-text-reveal"
-              style={{ animationDelay: `${index * 0.03}s` }}
-            >
-              {/* Replace spaces with a non-breaking space to preserve word spacing */}
-              {char === ' ' ? '\u00A0' : char}
-            </span>
-          ))}
+          {currentQuestion.text}
         </h1>
-        <div className="flex flex-row items-center gap-2 mt-2 mb-2 cursor-pointer flex-wrap">
+        <div className="flex  flex-row items-center gap-2 mt-2 mb-2 cursor-pointer flex-wrap">
           {currentQuestion.technologies?.map((tech, index) => {
             const normalizedTech = normalizeTech(tech);
             return (

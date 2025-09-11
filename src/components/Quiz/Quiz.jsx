@@ -9,9 +9,11 @@ import { QuizQuestion } from './QuizQuestion';
 import { ResultPopUp } from './ResultPopUp';
 import { ToggleThemeButton } from './ToggleThemeButton';
 import { i } from 'framer-motion/client';
+import { delay } from 'framer-motion';
 
 
 gsap.registerPlugin(useGSAP);
+
 
 const Quiz = () => {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -62,6 +64,7 @@ const Quiz = () => {
         'const MyComponent = () => { return Hello; } random text to overflow the option button  mkmfv lorem ipsum random text to overflow the option button',
         'class MyComponent extends React.Component { render() { return Hello; }} random text to overflow the option button  mkmfv lorem ipsum random text to overflow the option button',
         'Both A and B are correct random text to overflow the option button  mkmfv lorem ipsum random text to overflow the option button',
+        // 'Both c and d are correct random text to overflow the option button  mkmfv lorem ipsum random text to overflow the option button',
       ],
       correctAnswer: 'Both A and B are correct random text to overflow the option button  mkmfv lorem ipsum random text to overflow the option button',
       technologies: ['React.js', 'Node.js'],
@@ -201,32 +204,42 @@ const Quiz = () => {
       technologies: ['Java'],
     },
   ];
+  
 
-
-
+  useGSAP(() => {
+    inAnimation(0);
+  }, { dependencies: [], scope: containerRef });
+  
   const inAnimation = (nextIndex) => {
 
+    const optionButtons = gsap.utils.toArray('.option-button');
 
+  
+   
+    gsap.set(optionButtons, { x: 0, opacity: 0 });    
+
+  
     gsap.from('.question-header', {
-      y: 100,
-      opacity: 0,
-      duration: 0.6,
-      ease: "power2.out",
+      
       onComplete: () => {
         gsap.set('.question-header', { clearProps: 'all' });
 
-        // Start button animations AFTER header finishes
+        
         gsap.utils.toArray('.option-button').forEach((el, index) => {
+         
+          
           gsap.from(el, {
             x: index % 2 === 0 ? -100 : 100,
             opacity: 0,
             duration: 0.6,
-            delay: index * 0.4, // this delay is now relative to header's finish
+            delay: index * 0.3, // this delay is now relative to header's finish
             ease: "power2.out",
             onComplete: () => {
               gsap.set(el, { clearProps: 'all' });
             }
           });
+      
+           
         });
       }
     });
@@ -235,6 +248,7 @@ const Quiz = () => {
 
 
   const goToQuestion = (dir) => {
+    
     const nextIndex = currentQuestionIndex + dir;
     if (nextIndex < 0 || nextIndex >= questions.length) return;
     if (nextIndex === currentQuestionIndex) return;
@@ -263,13 +277,15 @@ const Quiz = () => {
 
     // Exit animation for options (staggered)
     gsap.utils.toArray('.option-button').forEach((el, index) => {
+      // console.log("Animating out option index:", index, el);
       tl.to(el, {
         opacity: 0,
         x: index % 2 === 0 ? -100 : 100,
         duration: 0.4,
         ease: "power2.out"
-      }, "-=0.2" + index * 0.2); // overlap timing a bit
+      }, "-=0.2" + index * 0.3); // overlap timing a bit
     });
+    // tl.to({}, { duration: 0.1});
   };
 
   useGSAP(
@@ -294,6 +310,7 @@ const Quiz = () => {
       //   }
 
       // }
+    
       if ((nextClicked) && selectedOption !== null) {
 
 
@@ -431,13 +448,17 @@ const Quiz = () => {
 
   const currentQuestion = questions[currentQuestionIndex];
 
+  // Run animation once on first question load
+  
+
+
 
   return (
     <>
       <div className={`${isDark ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-900'} min-h-screen  transition-colors duration-500 relative`}>
         <ToggleThemeButton isDark={isDark} toggleDarkMode={toggleDarkMode} />
         <div
-          className="min-h-screen flex flex-col justify-center items-center w-full px-4 sm:px-8 md:px-16 lg:px-60"
+          className="min-h-screen flex flex-col justify-center items-center w-full px-4 sm:px-8 md:px-16 lg:px-[8rem] "
           ref={containerRef}
         >
           <div className="w-full">
