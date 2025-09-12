@@ -10,6 +10,9 @@ import { ResultPopUp } from './ResultPopUp';
 import { ToggleThemeButton } from './ToggleThemeButton';
 import { i } from 'framer-motion/client';
 import { delay } from 'framer-motion';
+import { questions } from '../../data/questions';
+import { useTheme } from '../../context/ThemeContext';
+import {animateProgressPulse,animateQuestionEntry,animateQuestionExit} from '../../utils/quizAnimations'
 
 
 gsap.registerPlugin(useGSAP);
@@ -29,182 +32,9 @@ const Quiz = () => {
   const [finalScore, setFinalScore] = useState(0);
   const [didPass, setDidPass] = useState(false);
 
-  const [isDark, setIsDark] = useState(() => {
-    try {
-      return window.matchMedia('(prefers-color-scheme: dark)').matches;
-    } catch {
-      return false;
-    }
-  });
-
-
-  const toggleDarkMode = () => {
-    setIsDark(!isDark);
-  };
+  const {isDark,toggleDarkMode} = useTheme()
 
   const PASS_PERCENT = 0.6;
-  const questions = [
-    // {
-    //   id: 1,
-    //   text: 'What is the correct way to create a functional component in React?',
-    //   options: [
-    //     'function MyComponent() { return Hello; }',
-    //     'const MyComponent = () => { return Hello; }',
-    //     'class MyComponent extends React.Component { render() { return Hello; }}',
-    //     'Both A and B are correct',
-    //   ],
-    //   correctAnswer: 'Both A and B are correct',
-    //   technologies: ['React.js', 'Node.js'],
-    // },
-    {
-      id: 1,
-      text: 'What is the correct way to create a functional component in React?',
-      options: [
-        'function MyComponent() { return Hello; } lorem ipsum random text to overflow the option button   mkmfv',
-        'const MyComponent = () => { return Hello; } random text to overflow the option button  mkmfv lorem ipsum random text to overflow the option button',
-        'class MyComponent extends React.Component { render() { return Hello; }} random text to overflow the option button  mkmfv lorem ipsum random text to overflow the option button',
-        'Both A and B are correct random text to overflow the option button  mkmfv lorem ipsum random text to overflow the option button',
-        // 'Both c and d are correct random text to overflow the option button  mkmfv lorem ipsum random text to overflow the option button',
-      ],
-      correctAnswer: 'Both A and B are correct random text to overflow the option button  mkmfv lorem ipsum random text to overflow the option button',
-      technologies: ['React.js', 'Node.js'],
-    },
-    {
-      id: 2,
-      text: 'What is JSX in React?',
-      options: [
-
-        'A syntax extension for JavaScript',
-        'A templating engine',
-        'A library for managing state',
-        'A CSS framework',
-      ],
-      correctAnswer: 'A syntax extension for JavaScript',
-      technologies: ['React.js'],
-    },
-    {
-      id: 3,
-      text: 'Which hook is used to manage state in functional components?',
-      options: ['useEffect', 'useState', 'useReducer', 'useContext'],
-      correctAnswer: 'useState',
-      technologies: ['React.js'],
-    },
-    {
-      id: 4,
-      text: 'What is the purpose of the virtual DOM in React?',
-      options: [
-        'To direcgsapy manipulate the DOM',
-        'To improve performance by minimizing DOM updates',
-        'To store application state',
-        'To handle routing',
-      ],
-      correctAnswer: 'To improve performance by minimizing DOM updates',
-      technologies: ['React.js'],
-    },
-    {
-      id: 5,
-      text: 'Which lifecycle method is used to fetch data in class components?',
-      options: [
-        'componentDidMount',
-        'componentWillUnmount',
-        'shouldComponentUpdate',
-        'render',
-      ],
-      correctAnswer: 'componentDidMount',
-      technologies: ['React.js'],
-    },
-    {
-      id: 6,
-      text: 'What is the default port for a Node.js application?',
-      options: ['3000', '8080', '5000', '80'],
-      correctAnswer: '3000',
-      technologies: ['Node.js'],
-    },
-    {
-      id: 7,
-      text: 'Which module is used to create a server in Node.js?',
-      options: ['http', 'fs', 'path', 'express'],
-      correctAnswer: 'http',
-      technologies: ['Node.js'],
-    },
-    {
-      id: 8,
-      text: "What is the purpose of the 'useEffect' hook in React?",
-      options: [
-        'To manage state',
-        'To perform side effects like data fetching',
-        'To handle routing',
-        'To optimize performance',
-      ],
-      correctAnswer: 'To perform side effects like data fetching',
-      technologies: ['React.js'],
-    },
-    {
-      id: 9,
-      text: 'Which JavaScript feature allows you to write asynchronous code?',
-      options: ['Promises', 'Callbacks', 'Async/Await', 'All of the above'],
-      correctAnswer: 'All of the above',
-      technologies: ['JavaScript'],
-    },
-    {
-      id: 10,
-      text: "What is the purpose of the 'fs' module in Node.js?",
-      options: [
-        'To handle file system operations',
-        'To create HTTP servers',
-        'To manage routing',
-        'To interact with databases',
-      ],
-      correctAnswer: 'To handle file system operations',
-      technologies: ['Node.js'],
-    },
-    {
-      id: 11,
-      text: 'Which of the following is a Python framework for web development?',
-      options: ['Django', 'Flask', 'FastAPI', 'All of the above'],
-      correctAnswer: 'All of the above',
-      technologies: ['Python'],
-    },
-    {
-      id: 12,
-      text: "What is the purpose of the 'useReducer' hook in React?",
-      options: [
-        'To manage complex state logic',
-        'To fetch data',
-        'To handle routing',
-        'To optimize performance',
-      ],
-      correctAnswer: 'To manage complex state logic',
-      technologies: ['React.js'],
-    },
-    {
-      id: 13,
-      text: 'Which of the following is a JavaScript framework?',
-      options: ['React.js', 'Angular', 'Vue.js', 'All of the above'],
-      correctAnswer: 'All of the above',
-      technologies: ['JavaScript'],
-    },
-    {
-      id: 14,
-      text: "What is the purpose of the 'path' module in Node.js?",
-      options: [
-        'To handle file paths',
-        'To create HTTP servers',
-        'To manage routing',
-        'To interact with databases',
-      ],
-      correctAnswer: 'To handle file paths',
-      technologies: ['Node.js'],
-    },
-    {
-      id: 15,
-      text: 'Which of the following is a Java framework?',
-      options: ['Spring', 'Hibernate', 'Struts', 'All of the above'],
-      correctAnswer: 'All of the above',
-      technologies: ['Java'],
-    },
-  ];
-  
 
   useGSAP(() => {
     inAnimation(0);
@@ -212,35 +42,71 @@ const Quiz = () => {
   
   const inAnimation = (nextIndex) => {
 
-    const optionButtons = gsap.utils.toArray('.option-button');
+    // const optionButtons = gsap.utils.toArray('.option-button');
 
   
    
-    gsap.set(optionButtons, { x: 0, opacity: 0 });    
+    // gsap.set(optionButtons, { x: 0, opacity: 0 });    
 
   
     gsap.from('.question-header', {
       
       onComplete: () => {
         gsap.set('.question-header', { clearProps: 'all' });
+       
+         const optionButtons = gsap.utils.toArray('.option-button')
+         const tl = gsap.timeline({
+           defaults: { ease: 'back.out(1.7)', duration: 0.6 },
+         })
+
+         // Step 1: Group buttons into rows dynamically
+         // Example: first 2 are row 0, next 2 are row 1 (adjust as needed)
+         const buttonsPerRow = 2 // change this if each row has different count
+         const rowGroups = []
+
+         for (let i = 0; i < optionButtons.length; i += buttonsPerRow) {
+           rowGroups.push(optionButtons.slice(i, i + buttonsPerRow))
+         }
+
+         
+
+         // Step 2: Animate each row with overlap
+         rowGroups.forEach((row, rowIndex) => {
+           tl.from(
+             row,
+             {
+               y: 100,
+               opacity: 0,
+               autoAlpha: 0,
+               stagger: 0.3,
+               onComplete: () => gsap.set(row, { clearProps: 'all' }),
+             },
+             rowIndex === 0 ? 0 : `>-${0.1}`
+           )
+         })
+
 
         
-        gsap.utils.toArray('.option-button').forEach((el, index) => {
-         
-          
-          gsap.from(el, {
-            x: index % 2 === 0 ? -100 : 100,
-            opacity: 0,
-            duration: 0.6,
-            delay: index * 0.3, // this delay is now relative to header's finish
-            ease: "power2.out",
-            onComplete: () => {
-              gsap.set(el, { clearProps: 'all' });
-            }
-          });
+        // gsap.utils.toArray('.option-button').forEach((el, index) => {
+
+        //     const row = index === 0 || index === 1 ? 0 : 1
+
+
+        //   gsap.from(el, {
+        //     // x: index % 2 === 0 ? -100 : 100,
+        //     y:100,
+        //     opacity: 0,
+        //      delay: 0.4 + row * 0.4,
+        //     duration: 0.8,
+        //     autoAlpha: 0, 
+        //     ease: "back.out(1.7)",
+        //     onComplete: () => {
+        //       gsap.set(el, { clearProps: 'all' });
+        //     }
+        //   });
       
            
-        });
+        // });
       }
     });
   };
@@ -266,24 +132,28 @@ const Quiz = () => {
         requestAnimationFrame(() => inAnimation(nextIndex));
       }
     });
-
+      
+    // tl.addPause(0.01)
     // Exit animation for header
     tl.to(".question-header", {
-      y: dir > 0 ? 100 : -100,
+      // y: dir > 0 ? 100 : -100,
+      y:100,
       opacity: 0,
-      duration: 0.4,
+      duration: 0.3,
       ease: "power2.out"
     });
-
+    
     // Exit animation for options (staggered)
     gsap.utils.toArray('.option-button').forEach((el, index) => {
       // console.log("Animating out option index:", index, el);
       tl.to(el, {
         opacity: 0,
-        x: index % 2 === 0 ? -100 : 100,
-        duration: 0.4,
+        // x: index % 2 === 0 ? -100 : 100,
+        y:100,
+        
+        duration: 0.3,
         ease: "power2.out"
-      }, "-=0.2" + index * 0.3); // overlap timing a bit
+      }, "-=0.1" + index * 0.2); // overlap timing a bit
     });
     // tl.to({}, { duration: 0.1});
   };
