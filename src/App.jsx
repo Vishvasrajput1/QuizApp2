@@ -4,14 +4,18 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import Quiz from './components/Quiz/Quiz'
 import TechnicalQuizForm from './components/TechnicalQuizForm /TechnicalQuizForm '
+import { ThemeProvider } from './context/ThemeContext'
+
 
 function App() {
   const [count, setCount] = useState(0)
 
   return (
     <>
+    <ThemeProvider >
      {/* <TechnicalQuizForm /> */}
       <Quiz />
+      </ThemeProvider>
     </>
   )
 }
