@@ -1,8 +1,9 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { FaReact, FaNode, FaJs, FaPython, FaJava, FaAngular } from "react-icons/fa"
+import { useTheme } from '../../context/ThemeContext'
 
-const TechnicalQuizForm = ({ onTechnologySelect, isDark }) => {
+const TechnicalQuizForm = ({ onTechnologySelect}) => {
   const { register, handleSubmit, formState: { errors }, watch } = useForm({
     defaultValues: {
       email: '',
@@ -20,7 +21,7 @@ const TechnicalQuizForm = ({ onTechnologySelect, isDark }) => {
       }
     }
   })
-
+  const {isDark,toggleDarkMode} = useTheme()
   const handleStartQuiz = (data) => {
     localStorage.setItem('email', data.email)
     const selectedTechnologies = Object.entries(data.technologies)

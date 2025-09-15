@@ -2,17 +2,15 @@ import React from 'react'
 import 'animate.css';
 import { gsap } from 'gsap';
 import { useGSAP } from '@gsap/react';
-
+import {motion} from "framer-motion"
 export const QuizHeader = ({
   isDark,
   currentQuestionIndex,
   questions,
-  progressRefs,
   answerResults,
-  nextClicked,
   selectedOption,
   goToQuestion,
-  setPreviousClicked,
+
 }) => {
   const [animate, setAnimate] = React.useState(true);
   React.useEffect(() => {
@@ -21,47 +19,76 @@ export const QuizHeader = ({
     return () => clearTimeout(timeout);
   }, [currentQuestionIndex]);
   const hanldeProgressClick = (index) => {
-
-    if (index < currentQuestionIndex) {
-      setPreviousClicked(true);
+    if (index < currentQuestionIndex) {  
       goToQuestion(index - currentQuestionIndex);
-      setTimeout(() => setPreviousClicked(false), 500);
     }
   }
 
 
   return (
-    <div className={`w-full  mb-15  ${isDark ? 'text-white' : 'text-gray-900'}`}>
+    <div
+      className={`w-full  mb-15  ${isDark ? 'text-white' : 'text-gray-900'}`}
+    >
       <div className="flex justify-between mb-2">
         <h3 className="font-semibold text-lg">Quiz</h3>
-        <p className={`${isDark ? 'text-gray-200' : 'text-gray-600'}`}>{currentQuestionIndex + 1} of {questions.length}</p>
+        <p className={`${isDark ? 'text-gray-200' : 'text-gray-600'}`}>
+          {currentQuestionIndex + 1} of {questions.length}
+        </p>
       </div>
-      <div className="flex mt-4 justify-center gap-[0.1rem] item-center cursor-pointer">
-        {questions.map((_, index) => (
-          <div
-            key={index}
-            ref={el => (progressRefs.current[index] = el)}
-            className={`
-              lg:w-[2.5rem] lg:h-[2.5rem]  md:w-[1.5rem] md:h-[1.5rem] w-[1rem] flex-wrap rounded-full flex items-center justify-center mx-[0.2rem]  lg:font-bold lg:text-[1rem] sm:text-[0.7rem] md:text-[0.9rem] font-medium
-              transition-all duration-100 hover:border-2 hover:border-blue-500 hover:bg-blue-100 hover:text-black
-              ${index === currentQuestionIndex
-                ? `bg-gradient-to-br from-blue-500 to-blue-800 text-white scale-110 shadow-lg  ${animate ? 'animate__heartBeat' : ''} `
-                : answerResults[index] === true
-                  ? 'bg-green-500 text-white'
-                  : answerResults[index] === false
-                    ? 'bg-red-500 text-white'
-                    : ''
-              }
-              hover:shadow-xl
-             ${selectedOption === null && nextClicked && index === currentQuestionIndex ? 'text-pink' : ''}
-              `
-            }
-            onClick={()=>hanldeProgressClick(index)}
+      <div className="flex mt-4 justify-center gap-[0.2rem] item-center cursor-pointer">
+        {questions.map((_, index) => {
+          const isActive = index === currentQuestionIndex
+          const isCorrect = answerResults[index] === true
+          const isWrong = answerResults[index] === false
+       
+          const bgColor = isActive
+            ? '#2563eb' 
+            : isCorrect
+            ? '#4caf50' 
+            : isWrong
+            ? '#f44336' 
+            : '#e5e7eb'
 
-          >
-            {index + 1}
-          </div>
-        ))}
+          const textColor = isActive || isCorrect || isWrong ? '#fff' : '#000'
+
+          return (
+            <motion.div
+              key={index}
+             
+              className={`
+                ${
+                  animate && isActive
+                    ? 'animate__animated animate__heartBeat'
+                    : ''
+                }
+          lg:w-[2.5rem] lg:h-[2.5rem] md:w-[1.5rem] md:h-[1.5rem] w-[1rem] 
+          flex-wrap rounded-full flex items-center justify-center mx-[0.2rem] 
+          lg:font-bold lg:text-[1rem] text-[0.5rem] md:text-[0.9rem] md:font-medium
+          hover:shadow-xl cursor-pointer
+        `}
+              onClick={() => hanldeProgressClick(index)}
+              animate={{
+                scale: isActive ? 1.2 : 1,
+                backgroundColor: bgColor,
+                color: textColor,
+              }}
+              transition={{
+                duration: 0.4,
+                ease: 'easeInOut',
+                repeat: isActive && selectedOption !== null ? 1 : 0,
+                repeatType: 'reverse',
+              }}
+              whileHover={{
+                border: '2px solid #3b82f6', 
+                backgroundColor: '#dbeafe',
+                color: '#000',
+                scale: 1.1,
+              }}
+            >
+              {index + 1}
+            </motion.div>
+          )
+        })}
       </div>
     </div>
   )
