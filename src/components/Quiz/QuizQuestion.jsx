@@ -113,9 +113,13 @@ export const QuizQuestion = ({
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: 20 }}
                     transition={{
-                      delay: 0.8 + rowIndex * 0.2,
+                      delay: 0.8 + rowIndex * 0.3,
                       duration: 0.4,
-                      ease: [0.16, 1, 0.3, 1],
+                      type: 'spring',
+                      stiffness: 100,
+                      damping: 20,
+                      // delay: 0.5,
+                      // ease: [0.16, 1, 0.3, 1],
                     }}
                     className="w-full h-full"
                   >
