@@ -13,7 +13,7 @@ function App() {
   return (
     <>
     <ThemeProvider >
-     {/* <TechnicalQuizForm /> */}
+     <TechnicalQuizForm />
       <Quiz />
       </ThemeProvider>
     </>

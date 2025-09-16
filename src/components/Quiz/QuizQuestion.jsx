@@ -62,6 +62,9 @@ export const QuizQuestion = ({
           exit={{ opacity: 0, y: -80 }}
           transition={{
             duration: 0.6,
+            type: 'spring',
+            stiffness: 100,
+            damping: 20,
             ease: [0.16, 1, 0.3, 1],
             delay: 0.2,
           }}

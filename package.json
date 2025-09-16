@@ -14,6 +14,7 @@
     "@reduxjs/toolkit": "^2.9.0",
     "@tailwindcss/vite": "^4.1.13",
     "animate.css": "^4.1.1",
+    "axios": "^1.12.2",
     "framer-motion": "^12.23.12",
     "gasp": "^0.0.2",
     "gsap": "^3.13.0",

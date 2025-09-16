@@ -105,7 +105,7 @@ const Quiz = () => {
 
   return (
     <>
-      <div className={`${isDark ? 'bg-gray-900 text-white' : 'bg-gray-200 text-gray-900'} min-h-screen  transition-colors duration-500 relative`}>
+      <div className={`${isDark ? 'bg-gray-900 text-white' : 'bg-white text-gray-900'} min-h-screen  transition-colors duration-500 relative`}>
         <ToggleThemeButton isDark={isDark} toggleDarkMode={toggleDarkMode} />
         <div
           className="min-h-screen flex flex-col justify-center items-center w-full px-4 sm:px-8 md:px-16 lg:px-[8rem] "
